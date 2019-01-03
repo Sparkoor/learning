@@ -40,6 +40,7 @@ def download(url):
 
 def analyHtml(html):
     selector = etree.HTML(html)
+    print(html)
     # //*[@id="content"]/div[1]/div[1]/div[1]/div/p[1]/a
     houselist = selector.xpath('//*[@id="content"]/div/div/div')
     # //*[@id="content"]/div[1]/div[1]/div[1]/a/img
