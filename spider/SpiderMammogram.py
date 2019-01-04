@@ -1,7 +1,6 @@
 """
 爬取网上乳腺癌钼靶图像
 """
-
 import requests
 import time
 import re
@@ -16,7 +15,9 @@ def spider(keyword):
               'word=' + keyword + \
               'height=&face=&istype=&qc=&nc=&fr=&expermode=&force=&pn=' + str(page * 30) + '&rn=30&gsm=1e&154651709902'
         response = download(url)
-        analyHtml(response.text)
+        # 用于给图片命名的
+        nums = (page - 1) * 30 + 1
+        analyHtml(response.text, nums)
         time.sleep(3)
 
 
@@ -31,23 +32,23 @@ def download(url):
     return requests.get(url=url, headers=header)
 
 
-def analyHtml(html):
+def analyHtml(html, nums):
     # 根据返回的数据进行分析，用提取图片链接
     p = re.compile("thumbURL.*?\.jpg")
     # 获取正则匹配结果，返回的是一个list
     s = p.findall(html)
-    index = 1
     for i in s:
         url = i.replace("thumbURL\":\"", "")
-        image_saver(url, 'image' + str(index))
-        print('下载图片：' + i)
-        index = index + 1
+        image_saver(url, 'image' + str(nums))
+        print('下载图片：' + i + '第' + str(nums) + '张')
+        nums = nums + 1
 
 
 # 保存图片
 def image_saver(url, name):
     img = requests.get(url=url, headers=header)
     with open(name + '.jpg'.format(), 'wb') as f:
+        print('写入' + name)
         f.write(img.content)
 
 
