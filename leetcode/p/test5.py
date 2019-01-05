@@ -25,9 +25,7 @@ class Solution:
         :rtype: bool
         """
         i, j = 0, len(s) - 1
-        while i < j:
-            if
-    def isNumberOrCharacter(self,s):
-        if s<10 or s > 0:
-            return True
 
+    def isNumberOrCharacter(self, s):
+        if s < 10 or s > 0:
+            return True
