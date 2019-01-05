@@ -1,5 +1,6 @@
 """
 不用打开浏览器爬取内容
+爬异步加载的有点麻烦
 """
 from selenium import webdriver
 
