@@ -1,3 +1,6 @@
+"""
+画的是曲线图
+"""
 # 提供类似matlab的画图方式
 import matplotlib.pyplot as plt
 
@@ -24,7 +27,7 @@ for i in range(3):
         # y = stats.norm(mu, sd).ppf(x)
         ax[i, j].plot(x, y)
         # 设置弹出框的 控制纵轴的，alpha是做什么的？如果不等于0可以带线
-        ax[i, j].plot(0, 0, label="$\\mu$={:3.2f}\n$\\sigma$={:3.2f}\n$\\alpha$={:3.2f}".format(mu, sd,sd), alpha=0)
+        ax[i, j].plot(0, 0, label="$\\mu$={:3.2f}\n$\\sigma$={:3.2f}\n$\\alpha$={:3.2f}".format(mu, sd, sd), alpha=0)
         # 显示弹出框
         ax[i, j].legend(fontsize=8)
 
