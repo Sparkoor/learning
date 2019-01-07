@@ -20,9 +20,9 @@ print(paths[1])
 xt = os.path.splitext(r'D:\work\learning\utils\MD5.py')
 print(xt[1])
 # 对文件重命名
-# os.rename('test.txt', 'test.py')
+# os.rename('test.txt', 'naivePHD.py')
 # 删除文件
-# os.remove('test.py')
+# os.remove('naivePHD.py')
 # 列出当前目录下的所有目录
 y = [x for x in os.listdir('.') if os.path.isdir(x)]
 print(y)
