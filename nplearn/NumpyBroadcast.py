@@ -45,5 +45,20 @@ def brastIter():
     print([a, b])
 
 
+def test3():
+    # 广播的性质，可以自动补全
+    a = np.array([1, 2, 3, 4])
+    b = a - 1
+    # 初始化二维到三维数组时一定要注意中括号啊
+    c = np.array([
+        [2, 3, 4, 5],
+        [3, 4, 5, 6]
+    ]
+    )
+    d = c - a
+    print(d)
+    print(b)
+
+
 if __name__ == "__main__":
-    brastIter()
+    test3()
