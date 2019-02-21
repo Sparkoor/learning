@@ -2,10 +2,12 @@ from math import log
 # 运算符
 import operator
 
-# 计算香农熵:数据的整齐程度
-# 数学公式H=-sum(p(x)*log(p(x)))  p(x) 出现x类别的概率
+
+
 def calcShannonEnt(dataset):
     """
+    计算香农熵:数据的整齐程度
+    数学公式H=-sum(p(x)*log(p(x)))  p(x) 出现x类别的概率
     :param dataset:
     :return:
     """
@@ -58,7 +60,7 @@ def splitDataSet(dataSet, axio, value):
 
 def chooseBestFeatureToSplit(dataSet):
     """
-    选择最好的数据集划分方式
+    选择最好的数据集划分方式,返回特征的位置
     :param dataSet:
     :return:
     """
@@ -81,12 +83,50 @@ def chooseBestFeatureToSplit(dataSet):
             bestFeature = i
     return bestFeature
 
+
 def majoritCnt(classList):
     """
     投票方法，谁的票数多，投谁
     :param classList:
     :return:
     """
+    classCount = {}
+    for vote in classList:
+        if vote not in classCount.keys():
+            classCount[vote] = 0
+        classCount[vote] += 1
+    # 排序的方法
+    sortedClassCount = sorted(classCount.items(), key=operator.itemgetter(1), reverse=True)
+    return sortedClassCount[0][0]
+
+
+def createTree(dataSet, labels):
+    """
+    # 创建决策树
+    :param dataSet:
+    :param labels:
+    :return:
+    """
+    # 获取类别
+    classList = [example[-1] for example in dataset]
+    # 判断是否还剩最后一个类别,类别完全相同，停止继续划分
+    if classList.count(classList[0]) == len(classList):
+        return classList[0]
+    # 遍历完所有特征时返回出现次数最多的类别
+    if len(dataset[0]) == 1:
+        return majoritCnt(classList)
+    bestFeat = chooseBestFeatureToSplit(dataset)
+    bestFeatLabel = labels[bestFeat]
+    myTree = {bestFeatLabel: {}}
+    del (labels[bestFeat])
+    featValues = [example[bestFeat] for example in dataset]
+    uniqueVals = set(featValues)
+    # 遍历子节点
+    for value in uniqueVals:
+        subLabels = labels[:]
+        myTree[bestFeatLabel][value] = createDataSet(splitDataSet(dataset, bestFeat, value), subLabels)
+    return myTree
+
 
 if __name__ == "__main__":
     dataset, label = createDataSet()
