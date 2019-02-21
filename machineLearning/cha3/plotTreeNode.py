@@ -129,4 +129,4 @@ def retrieveTree(i):
 
 
 if __name__ == "__main__":
-    createPlot(retrieveTree(0))
+    createPlot(retrieveTree(1))
