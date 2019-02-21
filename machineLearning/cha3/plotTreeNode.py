@@ -34,20 +34,50 @@ def plotMidText(cntrpt, parentPt, txtString):
 
 
 def plotTree(myTree, parentPt, nodeTxt):
+    """
+    计算数据类型
+    :param myTree:
+    :param parentPt:
+    :param nodeTxt:
+    :return:
+    """
     numLeafs = getNumLeafs(myTree)
     numDepth = getDept(myTree)
-    firstStr = myTree.keys[0]
+    firstStr = list(myTree.keys())[0]
+    # plotTree.xOff plotTree.yOff 用来追踪已绘制节点的位置 y是固定的表示，同一行的孩子
+    cntrPt = (plotTree.xOff + (1.0 + float(numLeafs)) / 2.0 / plotTree.totalW, plotTree.yOff)
+    plotMidText(cntrPt, parentPt, nodeTxt)
+    plotNode(firstStr, cntrPt, parentPt, decisinNode)
+    secondDict = myTree[firstStr]
+    plotTree.yOff = plotTree.yOff - 1.0 / plotTree.totalD
+    for key in secondDict.keys():
+        if type(secondDict[key]).__name__ == 'dict':
+            plotTree(secondDict[key], cntrPt, str(key))
+        else:
+            plotTree.xOff = plotTree.xOff + 1.0 / plotTree.totalW
+            plotNode(secondDict[key], (plotTree.xOff, plotTree.yOff), cntrPt, leafNode)
+            plotMidText((plotTree.xOff, plotTree.yOff), cntrPt, str(key))
+    # 返回上一个坐标
+    plotTree.yOff = plotTree.yOff + 1.0 / plotTree.totalD
 
-def createPlot():
+
+def createPlot(inTree):
     """
     创建画布
     :return:
     """
     fig = plt.figure(1, facecolor='white')
     fig.clf()
-
+    # 某个设置
+    axprops = dict(xticks=[], yticks=[])
     # 这是一种全局变量
-    createPlot.ax1 = plt.subplot(111, frameon=False)
+    createPlot.ax1 = plt.subplot(111, frameon=False, **axprops)
+    plotTree.totalW = float(getNumLeafs(inTree))
+    plotTree.totalD = float(getDept(inTree))
+    plotTree.xOff = -0.5 / plotTree.totalW
+    plotTree.yOff = 1.0
+    plotTree(inTree, (0.5, 1.0), "")
+    plt.show()
 
 
 def getNumLeafs(myTree):
@@ -57,7 +87,7 @@ def getNumLeafs(myTree):
     :return:
     """
     numLeafs = 0
-    firstStr = myTree.keys()[0]
+    firstStr = list(myTree.keys())[0]
     secondDict = myTree[firstStr]
     for key in secondDict.keys():
         if type(secondDict[key]).__name__ == 'dict':
@@ -74,9 +104,10 @@ def getDept(myTree):
     :return:
     """
     maxDepth = 0
-    firstChild = myTree.keys[0]
+    # 获取key值需要转化成list
+    firstChild = list(myTree.keys())[0]
     secondDict = myTree[firstChild]
-    for key in secondDict.keys:
+    for key in secondDict.keys():
         if type(secondDict[key]).__name__ == 'dict':
             numDepth = 1 + getDept(secondDict[key])
         else:
@@ -98,4 +129,4 @@ def retrieveTree(i):
 
 
 if __name__ == "__main__":
-    createPlot()
+    createPlot(retrieveTree(0))
