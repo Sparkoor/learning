@@ -106,6 +106,60 @@ def classifyLogRege(dataMat, classLabels):
     print("错误率为", (error / len(testLabels)))
 
 
+def classifyVector(inX, weights):
+    """
+    分类器
+    :param inX:
+    :param weights:
+    :return:
+    """
+    prob = sigmoid(sum(inX * weights))
+    if prob > 0.5:
+        return 1.0
+    else:
+        return 0
+
+
+def colicTest():
+    """
+    训练并预测
+    :return:
+    """
+    frTrain = open('horseColicTraining.txt')
+    frTest = open('horseColicTest.tx')
+    trainingSet = []
+    trainingLabels = []
+    for line in frTrain.readlines():
+        currLine = line.strip().split()
+        lineArr = currLine[:-2]
+        trainingSet.append(lineArr)
+        trainingLabels.append(currLine[-1])
+    trainWeights = stocGradAscent0(np.array(trainingSet), trainingLabels)
+    errorCount = 0
+    numTestVec = 0.0
+    for line in frTest.readlines():
+        numTestVec += 1.0
+        currLine = line.strip().split()
+        lineArr = currLine[:-2]
+        if int(classifyVector(np.array(lineArr), trainWeights)) != int(currLine[-1]):
+            errorCount += 1
+    errorRate = (float(errorCount) / numTestVec)
+    print("错误率", errorCount)
+    return errorRate
+
+
+def multiTest():
+    """
+    对10次测试进行平均
+    :return:
+    """
+    numTest = 10
+    errorSum = 0
+    for i in range(numTest):
+        errorSum += colicTest()
+    print(errorSum / float(numTest))
+
+
 if __name__ == "__main__":
     dataMat, classLabels = loadDataSet()
     theta = gradAscent(dataMat, classLabels)
