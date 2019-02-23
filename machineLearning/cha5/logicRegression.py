@@ -48,6 +48,23 @@ def gradAscent(dataMat, classLabels):
     return theta
 
 
+def stocGradAscent0(dataMatrix, classLabels):
+    """
+    随机梯度上升算法，
+    :param dataMatrix:
+    :param classLabels:
+    :return:
+    """
+    m, n = dataMatrix.shape
+    alpha = 0.01
+    # 横着的
+    weights = np.ones(n)
+    for i in range(m):
+        h = sigmoid(sum(dataMatrix[i] * weights))
+        error = classLabels[i] - h
+        weights = weights + alpha * dataMatrix[i] * error
+
+
 def classifyLogRege(dataMat, classLabels):
     """
     训练样本,随机10作为测试样本

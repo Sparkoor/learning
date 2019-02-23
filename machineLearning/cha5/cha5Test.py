@@ -3,18 +3,45 @@
 """
 import numpy as np
 
-a = np.array([[1, 2, 3],
-              [4, 5, 6],
-              [7, 8, 9]])
-b = np.array([[3, 2, 3],
-              [10, 10, 10]])
-d = np.array([1, 1, 1]).reshape(1, 3)
-# print(a.T)
-# print(b.T)
-# 第一个矩阵是一行的计算
-c = np.dot(a.T, d.T)
-print(c.shape[0])
 
+def test1():
+    a = np.array([[1, 2, 3],
+                  [4, 5, 6],
+                  [7, 8, 9]])
+    b = np.array([[3, 2, 3],
+                  [10, 10, 10]])
+    d = np.array([1, 1, 1]).reshape(1, 3)
+    # print(a.T)
+    # print(b.T)
+    # 第一个矩阵是一行的计算
+    c = np.dot(a.T, d.T)
+    print(c.shape[0])
+    print(a[1, 1])
+    cc = np.ones(6)
+    print(cc)
+
+
+"""
+------------试一下画图
+"""
+import matplotlib.pyplot as plt
+
+
+def testPlot():
+    x = np.arange(-3.0, 3.0, 0.1)
+    y = (-4.12414349 - 0.48007329 * x) / -0.6168482
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(x, y)
+    plt.show()
+
+
+if __name__ == "__main__":
+    test1()
+
+"""
+---------书上的实现-------------------
+"""
 # import numpy as np
 #
 # # Size of the points dataset.
