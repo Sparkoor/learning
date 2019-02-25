@@ -1,6 +1,7 @@
 from svmMLiA import *
 import matplotlib.pyplot as plt
 from commonUtils.Loggings import *
+import logging
 
 # Logger需要带括号
 logger = Logger().getLogger()

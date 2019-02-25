@@ -1,7 +1,9 @@
+import logging
+
+
 class Logger:
-    def __init__(self):
-        import logging
-        self.LOG_LEVEL = logging.INFO
+    def __init__(self, level=logging.INFO):
+        self.LOG_LEVEL = level
         LOGFORMAT = "%(log_color)s[%(levelname)s] [%(log_color)s%(asctime)s] %(log_color)s%(filename)s [line:%(log_color)s%(lineno)d] : %(log_color)s%(message)s%(reset)s"
         import colorlog
         logging.root.setLevel(self.LOG_LEVEL)
@@ -15,13 +17,12 @@ class Logger:
         self.stream = logging.StreamHandler()
         self.stream.setLevel(self.LOG_LEVEL)
         self.stream.setFormatter(formatter)
+        self.log = logging.getLogger()
+        self.log.setLevel(self.LOG_LEVEL)
+        self.log.addHandler(self.stream)
 
     def getLogger(self):
-        import logging
-        log = logging.getLogger()
-        log.setLevel(self.LOG_LEVEL)
-        log.addHandler(self.stream)
-        return log
+        return self.log
 
 
 # log.debug("A quirky message only developers care about")
@@ -30,7 +31,7 @@ class Logger:
 # log.error("Serious stuff, this is red for a reason")
 # log.critical("OH NO everything is on fire")
 #####################################
-if __name__ == "__main__":
-    log = Logger().getLogger()
-    log.warning('aaa')
-    log.info("bbb")
+# if __name__ == "__main__":
+#     log = Logger().getLogger()
+#     log.warning('aaa')
+#     log.info("bbb")
