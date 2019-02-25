@@ -8,6 +8,7 @@ class Logging:
         logging.basicConfig(level=logging.INFO, format=logFormat)
 
     def info(self, message):
+        # 改变打印信息的颜色
         logging.info(colored(message, 'yellow'))
 
 
