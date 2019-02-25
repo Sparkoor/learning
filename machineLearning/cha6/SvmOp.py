@@ -1,5 +1,9 @@
 from svmMLiA import *
 import matplotlib.pyplot as plt
+from commonUtils.Loggings import *
+
+# Logger需要带括号
+logger = Logger().getLogger()
 
 
 class optStruct:
@@ -101,19 +105,19 @@ def innerL(i, os):
             L = max(0, os.alphas[j] + os.alphas[i] - os.c)
             H = min(os.c, os.alphas[j] + os.alphas[i])
         if L == H:
-            print('L==H')
+            # print('L==H')
             return 0
         # 用来计算新的alpha2
         eta = 2.0 * os.X[i, :] * os.X[j, :].T - os.X[i, :] * os.X[i, :].T - os.X[j, :] * os.X[j, :].T
         if eta >= 0:
-            print("eta>=0")
+            # print("eta>=0")
             return 0
         os.alphas[j] -= os.labelMat[j] * (Ei - Ej) / eta
         # 保证alpha在一定范围内
         os.alphas[j] = clipAlpha(os.alphas[j], H, L)
         updateEk(os, j)
         if abs(os.alphas[j] - alphaJold) < 0.00001:
-            print("j not moving enough")
+            logger.info("j not moving")
             return 0
         # 有公式
         os.alphas[i] += os.labelMat[j] * os.labelMat[i] * (alphaJold - os.alphas[j])
@@ -154,19 +158,20 @@ def smop(dataMatIn, classLabels, c, toler, maxIter, kTup=('lin', 0)):
             for i in range(os.m):
                 alphaPairsChanged += innerL(i, os)
                 iter += 1
-                print("内循环结束")
+                # print("内循环结束")
         else:
             # 没整明白
             nonBoundIs = np.nonzero((os.alphas.A > 0) * (os.alphas.A < c))[0]
+            print(nonBoundIs)
             for i in nonBoundIs:
                 alphaPairsChanged += innerL(i, os)
-                print("nonboundIn")
+                # print("nonboundIn")
                 iter += 1
         if entireSet:
             entireSet = False
         elif alphaPairsChanged == 0:
             entireSet = True
-            print("iter num %d" % iter)
+            # print("iter num %d" % iter)
     return os.b, os.alphas
 
 
