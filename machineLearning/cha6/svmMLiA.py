@@ -9,19 +9,33 @@ def loadDataSet(filename):
         dataLines = fr.readlines()
         for line in dataLines:
             lineArr = line.strip().split('\t')
-            dataMat.append(lineArr[:-2])
-            labelMat.append(lineArr[-1])
+            # 加入强制转换为以下计算使用
+            dataMat.append([float(lineArr[0]), float(lineArr[1])])
+            labelMat.append(float(lineArr[-1]))
     return dataMat, labelMat
 
 
 def selectJrand(i, m):
+    """
+    用于选择和i不同的随机数
+    :param i:
+    :param m:
+    :return:
+    """
     j = i
-    while (j == i):
+    while j == i:
         j = int(random.uniform(0, m))
     return j
 
 
 def clipAlpha(aj, H, L):
+    """
+    求最大的值
+    :param aj:
+    :param H:
+    :param L:
+    :return:
+    """
     if aj > H:
         aj = H
     if L > aj:
@@ -36,8 +50,16 @@ def clipAlpha(aj, H, L):
 """
 
 
-# 数据集 类别标签 常数c 容错率 退出前的最大循环次数
 def smoSimple(dataMatIn, classLabels, c, toler, maxIter):
+    """
+    数据集 类别标签 常数c 容错率 退出前的最大循环次数
+    :param dataMatIn:
+    :param classLabels:
+    :param c:
+    :param toler:
+    :param maxIter:
+    :return:
+    """
     dataMatrix = np.mat(dataMatIn)
     labelMat = np.mat(classLabels)
     b = 0
