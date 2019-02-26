@@ -160,7 +160,7 @@ def testRbf(k1=1.3):
     b, alphas = smop2(dataArr, labelArr, 200, 0.0001, 10000, ('rbf', k1))
     dataMat = np.mat(dataArr)
     labelMat = np.mat(labelArr).T
-    # 这是获取什么值啊:取大于0的alpha做什么 取支持向量
+    # 这是获取什么值啊:取大于0的alpha做什么 答：取支持向量
     svInd = np.nonzero(alphas.A > 0)[0]
     svs = dataMat[svInd]
     labelSV = labelMat[svInd]
@@ -177,14 +177,20 @@ def testRbf(k1=1.3):
     errorCount = 0
     dataMat = np.mat(dataMat)
     labelMat = np.mat(labelArr).T
+    # 选择支持向量
     labelSV = labelMat[svInd]
     m, n = dataMat.shape
     for i in range(m):
+        # 计算核函数值
         kernelEval = kernelTrans(svs, dataMat[i, :], ('rbf', k1))
+        # 预测值
         predict = kernelEval.T * np.multiply(labelSV, alphas[svInd]) + b
+        # 使用sign函数分类
         if np.sign(predict) != np.sign(labelArr[i]):
             errorCount += 1
-    logger.warning("错误率为%f" % float(errorCount) / m)
+
+    #
+    logger.warning("错误率为%f" % (float(errorCount) / m))
 
 
 def plotSmo(dataArr, labelArr, alpha, svs, b):
