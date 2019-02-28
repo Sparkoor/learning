@@ -136,6 +136,7 @@ def smop2(dataMatIn, classLabels, c, toler, maxIter, kTup=('lin', 0)):
                 # print("内循环结束")
         else:
             # 没整明白 当nonzero(x) x是行向量时要使用[1]表示列x是列时使用[0]
+            # note:进行过滤
             nonBoundIs = np.nonzero((os.alphas.A > 0) * (os.alphas.A < c))[0]
             # logging.warning((os.alphas.A > 0) * (os.alphas.A < c))
             for i in nonBoundIs:

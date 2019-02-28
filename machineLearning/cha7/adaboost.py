@@ -41,7 +41,7 @@ def plotSimpleData():
 
 def stumpClassify(dataMatrix, dimen, threshVal, threshIneq):
     """
-    单层决策树，树墩
+    单层决策树，树墩，使用循环变化步长，改变分解的值，使正确率最高
     :param dataMatrix:
     :param dimen: 任一元素
     :param threshVal: 分界的数值
@@ -142,7 +142,7 @@ def adaBoostTrainDs(dataArr, classLabels, numIt=40):
         logger.warning('total error%s', errorRate)
         if errorRate == 0.0:
             break
-    return weakClassArr
+    return weakClassArr, aggClassEst
 
 
 def adaClassify(datToClass, classiferArr):
@@ -165,7 +165,59 @@ def adaClassify(datToClass, classiferArr):
     return np.sign(aggClassEst)
 
 
+def plotRoc(predStrongths, classLabels):
+    """
+    ROC曲线的绘制及AUC计算函数,啥也没画出来
+    :param predStrongths:
+    :param classLabels:
+    :return:
+    """
+    # 绘制光标的位置
+    cur = (1.0, 1.0)
+    ysum = 0.0
+    numPosClas = sum(np.array(classLabels) == 1.0)
+    # 正例的步长
+    yStep = 1 / float(numPosClas)
+    # 反正例的步长
+    xStep = 1 / float(len(classLabels) - numPosClas)
+    sortedIndicies = predStrongths.flatten().argsort()
+    fig = plt.figure()
+    fig.clf()
+    ax = plt.subplot(111)
+    logger.critical(sortedIndicies)
+    logger.error(classLabels)
+    for index in sortedIndicies.tolist()[0]:
+        logger.critical(cur)
+        if classLabels[index] == 1.0:
+            delX = 0
+            delY = yStep
+            logger.info("为1的Ystep%s", yStep)
+        else:
+            delX = xStep
+            delY = 0
+            logger.info("为-1的%s", yStep)
+        ax.plot([cur[0], (cur[0] - delX)], [cur[1], (cur[1] - delY)], c='b')
+        cur = ((cur[0] - delX), (cur[1] - delY))
+        ax.plot([0, 0.3], [0.2, 0.8],c='r')
+    ax.plot([0, 1], [0, 1], 'b--')
+    plt.xlabel('False Position Rate')
+    plt.ylabel('True Position Rate')
+    plt.title('title')
+    ax.axis([0, 1, 0, 1])
+    plt.show()
+
+
 if __name__ == "__main__":
     dataArr, classLabels = loadSimpleData()
-    weak = adaBoostTrainDs(dataArr, classLabels, 3)
+    weak, aggErrorEst = adaBoostTrainDs(dataArr, classLabels, 3)
+    # logger.info(type(aggErrorEst))
+    # logger.info("aggErrorEst%s", aggErrorEst)
+    # logger.critical("aggErrorEst%s", aggErrorEst.argsort())
+    plotRoc(aggErrorEst, classLabels)
+    # sortedList = []
+    # for row in aggErrorEst:
+    #     for i in row:
+    #         sortedList.append(i[0, 0])
+    # logger.info(np.array(sortedList).argsort())
+    # print(sortedList)
     print(weak)
