@@ -52,9 +52,11 @@ def selectJ(i, os, Ei):
     maxDeltaE = 0
     Ej = 0
     os.eCache[i] = [1, Ei]
+    # 不清楚这是什么
     validEcacheList = np.nonzero(os.eCache[:, 0].A)[0]
+    # logger.critical("在求取最大步长使用{}".format(validEcacheList))
     if (len(validEcacheList) > 1):
-        # 对应非零alpha的索引
+        # 存放误差用于选去最大误差的j
         for k in validEcacheList:
             if k == i:
                 continue
@@ -67,6 +69,7 @@ def selectJ(i, os, Ei):
                 Ej = Ek
         return maxK, Ej
     else:
+        # 误差缓存中没有存取误差，第一个J随机选择
         j = selectJrand(i, os.m)
         Ek = calcEk(os, j)
     return j, Ek
@@ -81,6 +84,7 @@ def updateEk(os, k):
     """
     Ek = calcEk(os, k)
     os.eCache[k] = [1, Ek]
+    logger.error("更新误差缓存%s", k)
 
 
 def innerL(i, os):
