@@ -1,5 +1,5 @@
 """
-线性回归算法
+岭回归,通过引入惩罚项，减少不重要的参数
 """
 import numpy as np
 from commonUtils.Loggings import *
@@ -13,7 +13,7 @@ def loadData(fileName):
     :param fileName:
     :return:
     """
-    #  note:
+    #  note: 这是使用异常的形式
     try:
         fr = open(fileName, 'r')
         numFeat = len(fr.readlines().split('\t')) - 1
@@ -21,6 +21,7 @@ def loadData(fileName):
         logger.error(e)
     dataMat = []
     classLabels = []
+    # note：with上下文管理语句，解决多线程问题
     with open(fileName) as fr:
         lines = fr.readlines()
         for line in lines:
@@ -130,7 +131,7 @@ def ridgeTest(xArr, yArr):
     """
     xMat = np.mat(xArr)
     yMat = np.mat(yArr)
-    # 均值
+    # 均值 --------------------标准化处理start----------------------
     yMean = np.mean(yArr, 0)
     yMat = yMat - yMean
     xMean = np.mean(xMat, 0)
@@ -138,3 +139,12 @@ def ridgeTest(xArr, yArr):
     xVar = np.var(xMean, 0)
     # note:特征值的标准化：所有特征都减去各自的均值并除以方差
     xMat = (xMat - xMean) / xVar
+    # ------------------------标准化处理end---------------------------
+    # 调用的次数
+    numTestPts = 30
+    wMat = np.zeros((numTestPts, xMat.shape[1]))
+    for i in range(numTestPts):
+        # lam 选取30个数
+        ws = ridgeRegress(xMat, yMean, np.exp(i - 10))
+        wMat[i, :] = ws
+    return wMat

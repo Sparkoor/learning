@@ -2,7 +2,7 @@ import logging
 
 
 class Logger:
-    def __init__(self, level=logging.INFO):
+    def __init__(self, level=logging.DEBUG):
         self.LOG_LEVEL = level
         LOGFORMAT = "%(log_color)s[%(levelname)s] [%(log_color)s%(asctime)s] %(log_color)s%(filename)s [line:%(log_color)s%(lineno)d] : %(log_color)s%(message)s%(reset)s"
         import colorlog
@@ -23,7 +23,6 @@ class Logger:
 
     def getLogger(self):
         return self.log
-
 
 # log.debug("A quirky message only developers care about")
 # log.info("Curious users might want to know this")
