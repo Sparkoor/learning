@@ -22,5 +22,6 @@ with tf.Session(graph=g1) as sess:
         # 输出
         print(sess.run(tf.get_variable("v")))
 g = tf.Graph()
+
 with g.device('/gpu:0'):
     result = a + b

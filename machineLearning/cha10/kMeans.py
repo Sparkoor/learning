@@ -3,7 +3,6 @@ k均值聚类算法
 """
 import numpy as np
 from commonUtils.Loggings import *
-import logging
 
 logger = Logger().getLogger()
 
