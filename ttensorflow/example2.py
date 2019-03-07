@@ -14,7 +14,7 @@ w1 = tf.Variable(tf.random_normal([2, 3], stddev=1, seed=1))
 w2 = tf.Variable(tf.random_normal([2, 3], stddev=1, seed=1))
 
 # 在shape的一个维度使用None可以方便使用不大的batch大小，在训练时需要把数据分成比较小
-# 的batch，但在测试时，可以一次性的使用全部的数据，当数据集大时，有可能会溢出
+# 的batch，但在测试时，可以一次性的使用全部的数据，当数据集大  时，有可能会溢出
 # note：placeholder存放数据，占位符？？？，以后赋值，相当于声明变量
 x = tf.placeholder(tf.float32, shape=(None, 2), name='x-input')
 y_ = tf.placeholder(tf.float32, shape=(None, 1), name='y-input')
@@ -24,8 +24,12 @@ a = tf.matmul(x, w1)
 y = tf.matmul(a, w2)
 # 定义损失函数和反向传播算法
 cross_entropy = -tf.reduce_mean(y_ * tf.log(tf.clip_by_value(y, 1e-10, 1.0)))
-# note：AdamOptimizer 常见的优化方法，有三个
-train_step = tf.train.AdamOptimizer(0.001).minimize(cross_entropy)
+# note:学习率的设置
+global_step = tf.Variable(0)
+# 通过exponential_decay函数生成学习率,参数分别为 学习率的参数，运行了几轮，多少轮更新一次，下降率
+learning_rate = tf.train.exponential_decay(0.1, global_step, 100, 0.96, staircase=True)
+# note：AdamOptimizer 常见的优化方法，有三个,传入global_step将自动更新，从而使学习率也得到相应的更新
+train_step = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy, global_step=global_step)
 # 通过随机数生成一个模拟数据集
 rdm = RandomState(1)
 dataSet_size = 128
