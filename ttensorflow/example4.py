@@ -42,3 +42,5 @@ with tf.Session() as sess:
     sess.run(maintain_average_op)
     # note:在第五章会有具体的应用
     print(sess.run(v1, ema.average(v1)))
+
+
