@@ -3,7 +3,6 @@ from math import log
 import operator
 
 
-
 def calcShannonEnt(dataset):
     """
     计算香农熵:数据的整齐程度
@@ -45,7 +44,7 @@ def splitDataSet(dataSet, axio, value):
     根据某列的数据进行拆分,根据值进行划分
     :param dataSet: 待划分的数据集
     :param axio: 划分数据集的特征
-    :param value: 需要返回的特征的值
+    :param value: 需要返回的特征的值,根据某一特征的值进行分批
     :return: 该特征值下相同值的一个样本，但不带当前特征值
     """
     returnData = []
@@ -118,6 +117,7 @@ def createTree(dataSet, labels):
     bestFeat = chooseBestFeatureToSplit(dataset)
     bestFeatLabel = labels[bestFeat]
     myTree = {bestFeatLabel: {}}
+    # note：移除使用过的
     del (labels[bestFeat])
     featValues = [example[bestFeat] for example in dataset]
     uniqueVals = set(featValues)

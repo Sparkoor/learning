@@ -67,7 +67,7 @@ class Solution:
         :param sList:
         :return:
         """
-        logger.info("{}:{}".format(p,s))
+        logger.info("{}:{}".format(p, s))
         sLen = len(s)
         sSetLen = len(set(s))
         if sLen == sSetLen or sSetLen < 2:
@@ -89,7 +89,10 @@ class Solution:
                 right = self.lengthOfLongestSubstring3(s2[0: j + 1], 'right')
                 logger.warning(right)
                 maxL = max(left, right)
-            logger.critical(s2[j:])
+                # todo：再设置一个出口
+                logger.critical(s2[j:])
+            else:
+                print("ss")
             mid = self.lengthOfLongestSubstring3(s2[j:], 'mid')
             return max(maxL, mid)
 

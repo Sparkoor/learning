@@ -10,6 +10,7 @@
 # print(aa[0][1])
 
 import numpy as np
+from math import log
 
 
 def fun1():
@@ -37,5 +38,21 @@ def test1():
     print(row)
 
 
+def Ent(datas):
+    entSum = 0
+    for d in datas:
+        entSum -= log(d, 2) * d
+    return entSum
+
+
 if __name__ == "__main__":
-    test1()
+    p = [7 / 9, 2 / 9]
+    dd = Ent(p)
+    a1 = [3 / 4, 1 / 4]
+    aa1 = Ent(a1)
+    a2 = [3 / 4, 1 / 4]
+    aa2 = Ent(a2)
+    a3 = [1]
+    aa3 = Ent(a3)
+    p = dd - (4 / 9) * aa1 - (4 / 9) * aa2 - (1 / 9) * aa3
+    print(p)
