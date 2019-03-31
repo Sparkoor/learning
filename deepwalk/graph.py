@@ -63,7 +63,7 @@ class Graph(defaultdict):
         """
         t0 = time()
         for k in iter(self):
-            self[k] = list(sorted(set[k]))
+            self[k] = list(sorted(set(self[k])))
         t1 = time()
         logger.info("去除重复顶点{}".format(t1 - t0))
         self.removeSelfLoop()
@@ -78,7 +78,7 @@ class Graph(defaultdict):
         t0 = time()
 
         for x in self:
-            for x in self[x]:
+            if x in self[x]:
                 self[x].remove(x)
                 removed += 1
         t1 = time()
@@ -208,13 +208,14 @@ def clique(size):
 
 def grouper(n, iterable, padvalue=None):
     """
-    todo:不明白其作用
+    todo:不明白其作用,得出一个列表分配每个cpu执行的任务
     :param n:
     :param iterable:
     :param padvalue:
     :return:
     """
-    logger.warning("zip_lonest的参数{}".format(*[iter(iterable)] * n))
+    logger.warning("zip_lonest的参数{}".format(type(*[iter(iterable)])))
+    # 为了补全，可以截取一个常list，类似分页的功能
     return zip_longest(*[iter(iterable)] * n, fillvalue=padvalue)
 
 
@@ -275,6 +276,8 @@ def fromAdjListUnchecked(adjlist):
         neighbors = row[1:]
         G[node] = neighbors
 
+    return G
+
 
 def loadAdjacencyList(file_, undirected=False, chunksize=10000, unchecked=True):
     """
@@ -301,8 +304,12 @@ def loadAdjacencyList(file_, undirected=False, chunksize=10000, unchecked=True):
     with open(file_, mode='rb') as f:
         # todo:不懂下面这句的意思
         logger.error("从文件中读取信息")
+        # for i in grouper(int(chunksize), f):
+        #     logger.error(i)
+        # 迭代的数据类型只能通过迭代获取
         for idx, adjChunk in enumerate(map(parseFunc, grouper(int(chunksize), f))):
             adjlist.extend(adjChunk)
+            logger.error(idx)
             total += len(adjChunk)
     t1 = time()
 
@@ -342,7 +349,7 @@ def loadMatfile(file_, variableName='network', undirected=True):
     :return:
     """
     matVarables = loadmat(file_)
-    matMatrix = matVarables(variableName)
+    matMatrix = matVarables[variableName]
     return fromNumpy(matMatrix, undirected)
 
 
@@ -384,5 +391,7 @@ def fromNetworks(G_input, undirected=True):
 
 
 if __name__ == '__main__':
-    G = loadAdjacencyList(r'D:\work\learning\deepwalk\example\blogcatalog.mat')
+    # G = loadAdjacencyList(r'D:\work\learning\deepwalk\example\karate.adjlist')
+    # G = loadMatfile(r'D:\work\learning\deepwalk\example\blogcatalog.mat')
+    G = loadEdgeList(r'D:\work\learning\deepwalk\example\p2p-Gnutella08.edgelist')
     print(G)

@@ -28,5 +28,8 @@ if __name__ == '__main__':
     print(next(b))
     print(next(b))
 
-    c = map(fun2, fun1, [2, 3])
-    print(c)
+    # c = map(fun2, fun1, [2, 3])
+    # print(c)
+
+    d = [1 for x in range(3)]
+    print(d)
