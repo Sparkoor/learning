@@ -15,7 +15,9 @@ from commonUtils.Loggings import Logger
 
 logger = Logger().getLogger()
 
-Datasets = collections.namedtuple('Datasets', ['train', 'test', 'embedding', 'node_cluster', 'labels', 'idx_label'])
+# note:作用效果产生一个带有名称的元组
+Datasets = collections.namedtuple('Datasets',
+                                  ['train', 'test', 'embedding', 'node_cluster', 'labels', 'idx_label', 'label_name'])
 
 
 class DataSet(object):
@@ -122,6 +124,66 @@ def read_data_sets(train_dir):
     # note:npz是numpy读取的文件类型
     TRAIN_FILE = 'train_data.npz'
     TEST_FILE = 'test_data.npz'
+    # 连接路径
     data = np.load(os.path.join(train_dir, TRAIN_FILE))
-    train_data=DataSet
+    # note:这个DataSet是类吗
+    train_data = DataSet(data['train_data', data['nums_type']])
+    labels = data['labels'] if 'idx_label' in data else None
+    idx_label = data['idx_label'] if 'label_name' in data else None
+    label_set = data['label_name'] if 'label_name' in data else None
+    # 删除数据
+    del data
+    # 加载数据
+    data = np.load(os.path.join(train_dir, TEST_FILE))
+    test_data = DataSet(data['test_data'], data['nums_type'])
+    node_cluster = data['node_cluster'] if 'node_cluster' in data else None
+    test_labels = data['labels'] if 'labels' in data else None
+    del data
+    # todo:这是哪一步操作
+    embeddings = generate_embeddings(train_data.edge, test_data.nums_type)
+    # 产生一个带名称的元组
+    return Datasets(train=train_data, test=test_data, embedding=embeddings, node_cluster=node_cluster, labels=labels,
+                    idx_label=idx_label, label_name=label_set)
 
+
+def generate_H(edge, nums_type):
+    """
+    产生矩阵H
+    :param edge:
+    :param nums_type:
+    :return:
+    """
+    nums_examples = len(edge)
+    # 因为只有三个类型 a[row_ind[k], col_ind[k]] = data[k]？？？note：不是很明白，是按类型分的,它的数据长度是按顺序分配的吗，如果是就可以理解了
+    H = [csr_matrix((np.ones(nums_examples), (edge[:, i], range(nums_examples))), shape=(nums_type[i], nums_examples))
+         for i in range(3)]
+    return H
+
+
+def dense_to_onehot(labels):
+    """
+    todo：还不知到是做什么的
+    :param labels:
+    :return:
+    """
+    return np.array(map(lambda x: [x * 0.5 + 0.5, x * -0.5 + 0.5], list(labels)), dtype=float)
+
+
+def generate_embeddings(edge, nums_type, H=None):
+    """
+    生成嵌入
+    :param edge:
+    :param nums_type:
+    :param note；H:
+    :return: embeddings 二阶近邻吗
+    """
+    if H is None:
+        H = generate_H(edge, nums_type)
+    # note：为什么同种类型的不能用，这是求二阶邻近的，计算两点存在边，
+    embeddings = [H[i].dot(s_vstack([H[j] for j in range(3) if j != i]).T).astype('float') for i in range(3)]
+    for i in range(3):
+        col_max = np.array(embeddings[i].max(0).todense()).flatten()
+        _, col_index = embeddings[i].nonzero()
+        # note:这是做什么的
+        embeddings[i].data /= col_max[col_index]
+    return embeddings
