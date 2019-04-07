@@ -9,11 +9,11 @@ from functools import reduce
 import math
 import time
 
-from keras.models import Model
-from keras import regularizers, optimizers
-from keras.layers import Input, Dense, concatenate
-from keras import backend as K
-from keras.models import load_model
+from keraslearn.models import Model
+from keraslearn import regularizers, optimizers
+from keraslearn.layers import Input, Dense, concatenate
+from keraslearn import backend as K
+from keraslearn.models import load_model
 
 from .dataset import read_data_sets, embedding_lookup
 

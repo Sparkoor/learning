@@ -6,8 +6,11 @@ from keras import models
 from keras import layers
 # 符号
 from keras import optimizers
+from keras import losses
+from keras import metrics
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 from commonUtils.Loggings import *
 
 logger = Logger().getLogger()
@@ -93,15 +96,17 @@ def init_model():
     plt.show()
 
 
-def loadData_reuter():
+def load_data_reuter(path=''):
     """
     加载路透社数据集
     :return:
     """
-    data = np.load(r"D:\work\learning\machineLearning\keras\sample\reuters.npz")
+    data = np.load(r"D:\workspace\pproject\machineLearning\keraslearn\sample\reuters.npz")
     x = data['x']
     y = data['y']
     logger.info('load data type:{}'.format(type(x)))
+    logger.info('最大的数据：{}'.format(max([max(s) for s in x])))
+    logger.info('加载数据{}条'.format(len(x)))
     return x, y
 
 
@@ -120,5 +125,72 @@ def to_one_hot(labels, dimension=46):
     return result
 
 
+def multi_division_model():
+    """
+    初始化一个多分类的神经网络
+    :return:
+    """
+    model = models.Sequential()
+    model.add(layers.Dense(64, activation='relu', input_shape=(40000,)))
+    model.add(layers.Dense(64, activation='relu'))
+    # softmax分类结果的概率和等于1
+    model.add(layers.Dense(46, activation='softmax'))
+    # note：编译模型,优化算法，分类交叉熵，未知
+    model.compile(optimizer='rmsprop', loss=losses.binary_crossentropy, metrics=[metrics.binary_accuracy])
+    x_train, y_train = load_data_reuter()
+    x_train = vectorize_sequence(x_train, 40000)
+    # print("y_train[:100]:{}".format(y_train[:, 100]))
+    # 流出验证集
+    x_val = x_train[:1000]
+    partial_x_trian = x_train[1000:]
+    # 标签向量化
+    y_val = to_one_hot(y_train)[:1000]
+    partial_y_trian = to_one_hot(y_train)[1000:]
+    # 给训练模型送如数据
+    history = model.fit(partial_x_trian, partial_y_trian, epochs=20, batch_size=512, validation_data=(x_val, y_val))
+    # 需要给出测试集
+    x_test = x_train[3000:3500]
+    y_test = to_one_hot(y_train)[3000:3500]
+    result = model.evaluate(x_test, y_test)
+    logger.info("result:{}".format(result))
+    predict = model.predict(x_train[4000:4100])
+    logger.info("predict:{}".format(predict))
+
+    return history
+
+
+def plot_ruter_loss(history):
+    """
+    画图
+    :param history:
+    :return:
+    """
+    # 训练损失和验证损失
+    logger.info("start plotting....")
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epochs = range(1, len(loss) + 1)
+
+    plt.plot(epochs, loss, 'bo', label='Training loss')
+    plt.plot(epochs, val_loss, 'b', label='Validation loss')
+
+    plt.xlabel('epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()
+    # 清空图像
+    plt.clf()
+    # 训练精度和验证精度
+    acc = history.history['acc']
+    val_acc = history.history['val_acc']
+    plt.plot(epochs, acc, 'r', label='Training Acc')
+    plt.plot(epochs, val_acc, 'b', label='Validation Acc')
+    plt.xlabel('epochs')
+    plt.ylabel('acc')
+    plt.legend()
+    plt.show()
+
+
 if __name__ == '__main__':
-    loadData_reuter()
+    history = multi_division_model()
+    plot_ruter_loss(history)
