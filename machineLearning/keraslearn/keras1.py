@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from commonUtils.Loggings import *
+import time
 
 logger = Logger().getLogger()
 
@@ -192,5 +193,8 @@ def plot_ruter_loss(history):
 
 
 if __name__ == '__main__':
+    start = time.time()
     history = multi_division_model()
+    end = time.time()
+    print("spend time：{}".format(end - start))
     plot_ruter_loss(history)
