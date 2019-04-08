@@ -102,7 +102,9 @@ def load_data_reuter(path=''):
     加载路透社数据集
     :return:
     """
-    data = np.load(r"D:\workspace\pproject\machineLearning\keraslearn\sample\reuters.npz")
+    # from keras.datasets import reuters
+    data = np.load(r"/workspace/learning/machineLearning/keraslearn/sample/reuters.npz")
+    # data = reuters.load_data()
     x = data['x']
     y = data['y']
     logger.info('load data type:{}'.format(type(x)))
@@ -192,9 +194,102 @@ def plot_ruter_loss(history):
     plt.show()
 
 
+def load_data_boston(workpath=''):
+    """
+    加载波士顿数据集
+    :return:
+    """
+    from keras.datasets import boston_housing
+    (train_data, train_target), (test_data, test_target) = boston_housing.load_data()
+    logger.info('加载数据集训练集:{}'.format(len(train_data)))
+    logger.info('加载的测试集数：{}'.format(len(test_data)))
+    return (train_data, train_target), (test_data, test_target)
+
+
+def stand_data(data):
+    """
+    数据标准化,对于数据中的每个特征，减去特征平均值，再除以标准差
+    :param data:
+    :return:
+    """
+    logger.info('数据标准化')
+    mean = data.mean(axis=0)
+    data -= mean
+    std = data.std(axis=0)
+    data /= std
+    return data
+
+
+def build_regress_model(train_data):
+    """
+    构建回归问题的训练模型
+    :return:
+    """
+    logger.info('初始化训练模型。。。。')
+    # 初始化模型
+    model = models.Sequential()
+    model.add(layers.Dense(64, activation='relu', input_shape=(train_data.shape[1],)))
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(1))
+    # note:mse均方误差，预测值与目标值之差的平方，mae监控的新指标，预测值与目标值之差的绝对值
+    model.compile(optimizer='rmsprop', loss='mse', metrics=['mae'])
+    return model
+
+
+def K_validation(train_data, train_target):
+    """
+    使用K折交叉验证，这是划分训练集和验证集的方法。防止验证集的划分方式可能会造成的
+    验证分数上有很大的方差
+    :return:
+    """
+    k = 4
+    logger.info('进行训练。。。')
+    # note: // 是得到一个整数
+    num_val_samples = len(train_data) // k
+    num_epochs = 100
+    all_socore = []
+    for i in range(k):
+        logger.info('processing fold {}'.format(i))
+        # 准备验证集
+        val_data = train_data[i * num_val_samples:(i + 1) * num_val_samples]
+        val_target = train_target[i * num_val_samples:(i + 1) * num_val_samples]
+        # 准备训练集,
+        partial_train_data = np.concatenate([train_data[:i * num_val_samples], train_data[(i + 1) * num_val_samples:]],
+                                            axis=0)
+        partial_train_target = np.concatenate(
+            [train_target[:i * num_val_samples], train_target[(i + 1) * num_val_samples:]], axis=0)
+        # 数据标准化
+        partial_train_data = stand_data(partial_train_data)
+        val_data = stand_data(val_data)
+        # 模型已经编译
+        model = build_regress_model(partial_train_data)
+        # verbose 训练模型 静默式
+        model.fit(partial_train_data, partial_train_target, epochs=num_epochs, batch_size=1, verbose=0)
+        # 在验证数据集上评估模型
+        val_mse, val_mae = model.evaluate(val_data, val_target, verbose=0)
+        all_socore.append(val_mae)
+        # 这样可以保存结果
+        # history = model.evaluate(partial_train_data, partial_train_target, validation=(val_data, val_target),
+        #                          epochs=num_epochs, batch_size=500, verbose=0)
+
+
+def regress_main():
+    """
+    训练模型主函数
+    :return:
+    """
+    # 标准化数据
+    (train_data, train_target), (test_data, test_target) = load_data_boston()
+    train_data = stand_data(train_data)
+    K_validation(train_data, train_target)
+
+
 if __name__ == '__main__':
-    start = time.time()
-    history = multi_division_model()
-    end = time.time()
-    print("spend time：{}".format(end - start))
-    plot_ruter_loss(history)
+    # linux下的训练速度和windows一样
+    # start = time.time()
+    # history = multi_division_model()
+    # end = time.time()
+    # print("spend time：{}".format(end - start))
+    # plot_ruter_loss(history)
+    # 使用k折验证
+    regress_main()

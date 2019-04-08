@@ -1,6 +1,6 @@
 import numpy as np
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 x = np.arange(-5, 5, 1)
 y = np.arange(-5, 3, 2)
@@ -14,3 +14,12 @@ print(aa.A)
 # print(x)
 # print(y)
 # print(yy.ravel())
+
+a = 9 // 2
+print(a)
+
+arr = np.array([2, 3, 4, 5, 6, 7])
+p = np.concatenate([arr[:3], arr[5:9]], axis=0)
+print(arr)
+print(arr[:0])
+print(p)
