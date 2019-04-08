@@ -23,3 +23,8 @@ p = np.concatenate([arr[:3], arr[5:9]], axis=0)
 print(arr)
 print(arr[:0])
 print(p)
+# note:初始化是一定是一个矩阵
+rr = np.array([[2, 3, 4, 5, 6, 7],
+               [1, 2, 3, 4, 5, 1]])
+
+print(rr[1])
