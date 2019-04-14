@@ -8,6 +8,7 @@ xx, yy = np.meshgrid(x, y)
 # print(xx)
 # print(yy)
 aa = np.mat(np.nonzero((5, 2)))
+aa.ndim
 print(aa.A)
 # print(aa[0, :].A)
 
@@ -23,3 +24,9 @@ p = np.concatenate([arr[:3], arr[5:9]], axis=0)
 print(arr)
 print(arr[:0])
 print(p)
+
+from keras.datasets import mnist
+
+if __name__ == '__main__':
+    (a, e), (f, m) = mnist.load_data()
+

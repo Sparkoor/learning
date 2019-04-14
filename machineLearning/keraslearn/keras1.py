@@ -123,6 +123,7 @@ def to_one_hot(labels, dimension=46):
     # note:这个函数也可以实现to_one_hot
     from keras.utils.np_utils import to_categorical
     result = np.zeros((len(labels), dimension), dtype='float32')
+    # enumerate的用法，需要同时使用值以及index的时候
     for i, label in enumerate(labels):
         result[i, label] = 1
     return result
