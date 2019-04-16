@@ -27,4 +27,4 @@ print(p)
 rr = np.array([[2, 3, 4, 5, 6, 7],
                [1, 2, 3, 4, 5, 1]])
 
-print(rr[1])
+print(rr[1].reshape((6,1)))

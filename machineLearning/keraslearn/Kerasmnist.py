@@ -74,7 +74,7 @@ def train():
 
     model = build_model()
     model.fit(train_image, train_label, epochs=5, batch_size=128)
-    prediction = model.predict(test_image[300].reshape(784, 1))
+    prediction = model.predict(test_image[300].reshape((784, 1)))
     logger.critical("prediction {}".format(prediction))
     history = model.evaluate(test_image, test_label)
     logger.info("history : {}".format(history))
