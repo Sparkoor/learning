@@ -1,11 +1,11 @@
 # 引入线程池
 from multiprocessing.dummy import Pool as pl
 import requests
+from lxml import etree
 # 存数据的
 import csv
 # time可以睡眠
 import time
-
 
 
 def spider(a):
@@ -14,11 +14,11 @@ def spider(a):
     for i in range(1, 2):
         if i == 1:
             response = download(url)
-            analyHtml(response.text)
+            analyMainHtml(response.text)
             time.sleep(3)
         else:
             response = download(url + 'pg' + i)
-            analyHtml(response.text)
+            analyMainHtml(response.text)
             time.sleep(3)
 
 
@@ -34,16 +34,24 @@ def download(url):
     return requests.get(url=url, headers=header)
 
 
-def analyHtml(html):
-
-    # selector = etree.HTML(html)
-    print(html)
+def analyMainHtml(html):
+    selector = etree.HTML(html)
     # //*[@id="content"]/div[1]/div[1]/div[1]/div/p[1]/a
     # //*[@id="detail-list-select-1"]
-    # houselist = selector.xpath('//*[@id="detail-list-select-1"]')
-    #     //*[@id="detail-list-select-1"]/li[21]/a
-    # //*[@id="detail-list-select-1"]/li[1]/a
+    # 获取图片地址信息
+    imgUrlList = selector.xpath('//*[@id="detail-list-select-1"]/ul/li/a/@href')
+    urlList = []
+    for i in imgUrlList:
+        print(i)
 
+
+def analyPgHtml(url):
+    resp = download(url)
+    selector = etree.HTML(resp.text)
+
+
+def spiderMain():
+    s='a'
 
 # 保存到文件
 def data_writer(item):
@@ -62,5 +70,11 @@ def image_saver(url, xiaoqu):
 
 
 if __name__ == '__main__':
-    resp = download('http://www.1kkk.com/manhua10684/')
-    print(resp)
+    """
+    地址没找到规律
+    """
+    resp = download('http://www.1kkk.com/ch142-752763/#ipg2')
+    ss=etree.HTML(resp.text)
+    str=ss.xpath('//*[@id="cp_image"]')
+    print(str)
+    print(etree.tostring(ss))
