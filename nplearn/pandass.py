@@ -37,7 +37,10 @@ print(new_data)
 dta = file_read.loc[2, "num"]
 # 根据num排序
 new_sort = file_read.sort_values('num', ascending=True)
-
+# 获取列名
+print(list(file_read))
+print(list(file_read.columns.values))
+print(list(file_read.columns.tolist()))
 # 重新设置index值 drop 以前的索引值删除
 new_sort.reset_index(drop=True)
 

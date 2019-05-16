@@ -10,8 +10,8 @@ def spider():
     # 获取最初页面的句柄页-----------------------------------------------
     current_win = driver.current_window_handle
     # ---------------------------------------------------------------------
-    # //*[@id="kw"] 找到收缩框
-    search_box = driver.find_element_by_xpath('//*[@id="detail-list-select-1"]/li[16]/a')
+    # //*[@id="kw"] 找到收缩框//*[@id="detail-list-select-1"]/li[1]/a
+    search_box = driver.find_element_by_xpath('//*[@id="detail-list-select-1"]/li[1]/a')
     search_box.click()
 
     # 跳转完成后，获取所有窗口的句柄-----------------------------------------------
@@ -23,6 +23,7 @@ def spider():
             driver.switch_to.window(i)
     # --------------------------------------------------------------------
     time.sleep(3)
+    print(driver.page_source)
     img = driver.find_element_by_xpath('//*[@id="cp_image"]')
     print(img.text)
 
