@@ -1,6 +1,6 @@
 import logging
 
-
+# todo:实现使用单例模式，但是一改需要改很多。。。。
 class Logger:
     def __init__(self, level=logging.DEBUG):
         self.LOG_LEVEL = level
