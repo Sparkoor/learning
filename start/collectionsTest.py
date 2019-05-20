@@ -36,6 +36,8 @@ from collections import defaultdict
 s = [('yellow', 1), ('blue', 2), ('yellow', 3), ('yellow', 3), ('blue', 4), ('red', 1)]
 # 接受一个对象
 d = defaultdict(list)
+for key, value in s:
+    d[key].append(value)
 # 保持Key的顺序
 from collections import OrderedDict
 # 简单的计数器，统计字符出现的次数,key-value 的形式，是dict的子类
@@ -44,6 +46,9 @@ from collections import Counter
 c = Counter()
 
 for ch in 'programming':
-    c[ch] = c[ch] + 1
-
-print(c['r'])
+    # c[ch] = c[ch] + 1
+    c.update(ch)
+c.update('p')
+c.update('p')
+print(c['p'])
+print(sum(c.values()))

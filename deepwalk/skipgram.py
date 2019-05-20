@@ -1,20 +1,19 @@
-"""
-skipgram算法
-"""
 from collections import Counter, Mapping
 from concurrent.futures import ProcessPoolExecutor
-from commonUtils.Loggings import Logger
+import logging
 from multiprocessing import cpu_count
-# string_types是什么
+from six import string_types
 
-from gensim.models import word2vec
+from gensim.models import Word2Vec
 from gensim.models.word2vec import Vocab
 
+logger = logging.getLogger("deepwalk")
 
-class Skipgram(word2vec):
+class Skipgram(Word2Vec):
     """A subclass to allow more customization of the Word2Vec internals."""
 
     def __init__(self, vocabulary_counts=None, **kwargs):
+
         self.vocabulary_counts = None
 
         kwargs["min_count"] = kwargs.get("min_count", 0)
@@ -26,5 +25,6 @@ class Skipgram(word2vec):
         kwargs["hs"] = 1
 
         if vocabulary_counts != None:
-            self.vocabulary_counts = vocabulary_counts
+          self.vocabulary_counts = vocabulary_counts
+
         super(Skipgram, self).__init__(**kwargs)
