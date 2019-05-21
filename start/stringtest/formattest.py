@@ -58,6 +58,8 @@ def test2():
 
 
 from collections import defaultdict
+import multiprocessing
+
 # from mpi4py import MPI
 #
 # comm = MPI.COMM_WORLD
@@ -70,9 +72,9 @@ class Graph(defaultdict):
         super(Graph, self).__init__(list)
 
 
-def a(x):
+def a(x, input):
     # print('ss')
-    g = __global_a
+    g = input.recv()
     print("x:{}".format(x))
     print("g:{}".format(g))
 
@@ -84,9 +86,11 @@ def b():
         g[i].append(j)
     print(g)
     __global_a = g
+    out = multiprocessing.Pipe()
+    out.send(__global_a)
     # __global_a = comm.bcast(__global_a, root=0)
     with ProcessPoolExecutor(max_workers=1) as executor:
-        features = [executor.submit(a, x) for x in [1, 2]]
+        features = [executor.submit(a, x, out) for x in [1, 2]]
         for feature in concurrent.futures.as_completed(features):
             print(feature.result())
 

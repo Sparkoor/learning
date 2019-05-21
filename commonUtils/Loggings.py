@@ -1,17 +1,19 @@
 import logging
 
+
 # todo:实现使用单例模式，但是一改需要改很多。。。。
-class Logger:
+class __Logger:
     def __init__(self, level=logging.DEBUG):
         self.LOG_LEVEL = level
-        LOGFORMAT = "%(log_color)s[%(levelname)s] [%(log_color)s%(asctime)s] %(log_color)s%(filename)s [line:%(log_color)s%(lineno)d] : %(log_color)s%(message)s%(reset)s"
+        LOGFORMAT = "%(log_color)s[%(levelname)s] [%(log_color)s%(asctime)s] %(log_color)s%(filename)s [line:%(" \
+                    "log_color)s%(lineno)d] : %(log_color)s%(message)s%(reset)s"
         import colorlog
         logging.root.setLevel(self.LOG_LEVEL)
         ############
         # 此配置是将日志输出到myapp.log
         colorlog.basicConfig(format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                              filename='mylog.log',
-                             filemode='w', datefmt='%a, %d %b %Y %H:%M:%S')
+                             filemode='a', datefmt='%a, %d %b %Y %H:%M:%S')
         ##############
         formatter = colorlog.ColoredFormatter(LOGFORMAT)
         self.stream = logging.StreamHandler()
@@ -24,6 +26,8 @@ class Logger:
     def getLogger(self):
         return self.log
 
+
+Logger = __Logger()
 # log.debug("A quirky message only developers care about")
 # log.info("Curious users might want to know this")
 # log.warning("Something is wrong and any user should be informed")

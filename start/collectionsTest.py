@@ -52,3 +52,12 @@ c.update('p')
 c.update('p')
 print(c['p'])
 print(sum(c.values()))
+d = Counter()
+print(c)
+for i in c:
+    d.update(i)
+for i in c:
+    d.update(i)
+print(d)
+print(len(d.keys()))
+print(sum(d.values()))
