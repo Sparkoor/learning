@@ -14,6 +14,7 @@ p = psutil.Process(os.getpid())
 print("进程名称", p.pid)
 print("使用进程", os.getpid())
 logger.warning("使用进程{}".format(os.getpid()))
+logger.warning("cpu:{}".format(cpu_count()))
 
 
 def a(s):
@@ -26,4 +27,6 @@ def b():
 
 
 if __name__ == '__main__':
-    b()
+    # b()
+    print("aa" + str(os.getpid()))
+    print("{}.{}.{}".format('aa', 'bb', str(os.getpid())))

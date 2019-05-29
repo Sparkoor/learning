@@ -61,3 +61,8 @@ for i in c:
 print(d)
 print(len(d.keys()))
 print(sum(d.values()))
+l=Counter()
+for i in [1,2,3,3]:
+    l.update(str(i))
+print(l)
+print(sum(l.values()))
