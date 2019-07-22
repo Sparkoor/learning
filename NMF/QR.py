@@ -25,6 +25,8 @@ def schmidt(A):
         p = np.zeros(m)
         for j in range(0, m):
             if i != j:
+                # todo：使用array可以，mat就不可以。结论还是使用array
+                # r = np.dot(A[i], ql[j][0,:].T)
                 r = np.dot(A[i], ql[j])
                 p = np.add(p, np.multiply(r, ql[j]))
                 R[j, i] = r
@@ -40,7 +42,7 @@ def schmidt(A):
 if __name__ == '__main__':
     G = load(r"D:\work\learning\NMF\datasets\tu")
     A = G.transferMatrix()
-    B = np.array([[1, -1, 4],
+    B = np.mat([[1, -1, 4],
                 [1, 4, -2],
                 [1, 4, 2],
                 [1, -1, 0]])
