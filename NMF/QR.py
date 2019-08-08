@@ -42,10 +42,10 @@ def schmidt(A):
 if __name__ == '__main__':
     G = load(r"D:\work\learning\NMF\datasets\tu")
     A = G.transferMatrix()
-    B = np.mat([[1, -1, 4],
-                [1, 4, -2],
-                [1, 4, 2],
-                [1, -1, 0]])
+    B = np.array([[1, -1, 4],
+                  [1, 4, -2],
+                  [1, 4, 2],
+                  [1, -1, 0]])
     Q1, R1 = np.linalg.qr(B)
 
     R, Q = schmidt(B)
