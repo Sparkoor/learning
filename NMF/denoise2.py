@@ -38,8 +38,9 @@ def compute_log_prob(X, Y, i, j, w_e, w_s, y_val):
     :param y_val: -1 1 ？？？
     :return:
     """
+    # 这是验证观测值和未观察的对比，如果相同则为正
     result = w_e * X[i][j] * y_val
-    # 这是计算四个方向，计算误差吗？？？
+    # 这是计算四个方向，计算误差？顶点对于邻近的节点具有相似性，这也算是用到了马尔可夫随机场
     result += w_s * y_val * compute_log_prob_helper(Y, i - 1, j)
     result += w_s * y_val * compute_log_prob_helper(Y, i + 1, j)
     result += w_s * y_val * compute_log_prob_helper(Y, i, j - 1)
@@ -64,7 +65,7 @@ def denoise_image(X, w_e, w_s):
         # 随机选择位置
         i = np.random.randint(m)
         j = np.random.randint(n)
-        # 计算两个Y_ij值的对数概率
+        # 计算两个Y_ij值的对数概率，在未知真实图的数值下分别对正反例的概率进行计算。
         log_p_neg = compute_log_prob(X, Y, i, j, w_e, w_s, -1)
         log_p_pos = compute_log_prob(X, Y, i, j, w_e, w_s, 1)
 
