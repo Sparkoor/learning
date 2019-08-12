@@ -45,7 +45,7 @@ def compute_log_prob(X, Y, i, j, w_e, w_s, y_val):
     result += w_s * y_val * compute_log_prob_helper(Y, i + 1, j)
     result += w_s * y_val * compute_log_prob_helper(Y, i, j - 1)
     result += w_s * y_val * compute_log_prob_helper(Y, i, j + 1)
-    # todo:做什么用的？？？
+    # 概率
     return result
 
 
