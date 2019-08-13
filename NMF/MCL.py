@@ -130,6 +130,8 @@ def mcl(M, expand_factor=2, inflate_factor=2, max_loop=10, mult_factor=1):
         logging.info("loop %s" % i)
         M = inflate(M, inflate_factor)
         M = expand(M, expand_factor)
+        write_to_file(M, r"D:\work\learning\NMF\datasets\datas")
+        print(i)
         if stop(M, i):
             break
     cluster = get_clusters(M)
@@ -201,6 +203,21 @@ def clusters_to_output(cluster, option):
         print("cluster:")
         for k, v in cluster.items():
             print('{},{}'.format(k, v))
+
+
+def write_to_file(M, filename):
+    """
+    把矩阵写入文件
+    :param M:
+    :return:
+    """
+    with open(filename, "a") as f:
+        for i in range(M.shape[0]):
+            for m in M[i, :]:
+                f.write(str(m) + " ")
+            f.write("\n")
+        f.write("--------------------------------------------\n")
+        f.close()
 
 
 def get_options():
