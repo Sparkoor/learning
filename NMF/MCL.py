@@ -65,6 +65,7 @@ def get_clusters(A):
 
     for cn, c in enumerate(cluster):
         for x in [i for i, x in enumerate(c) if x]:
+            # 这是啥意识，后面还加list类型
             clust_map[cn] = clust_map.get(cn, []) + [x]
     return clust_map
 
@@ -85,15 +86,18 @@ def draw(G, A, cluster_map):
         for v in vals:
             clust_map[v] = k
     colors = []
+    labels = {}
     for i in range(len(G.nodes())):
         # todo:get后面的数字是做什么的
         colors.append(clust_map.get(i, 100))
+        labels[i] = i
     pos = nx.spring_layout(G)
 
     from matplotlib.pylab import matshow, show, cm
     plt.figure(2)
     nx.draw_networkx_nodes(G, pos, node_size=200, node_color=colors, cmap=plt.cm.Blues)
     nx.draw_networkx_edges(G, pos, alpha=0.5)
+    nx.draw_networkx_labels(G, pos, labels, font_size=14)
     plt.show()
     show()
 

@@ -4,7 +4,7 @@ k均值聚类算法
 import numpy as np
 from commonUtils.Loggings import *
 
-logger = Logger().getLogger()
+logger = Logger.getLogger()
 
 
 def loadData(fileName):
@@ -51,11 +51,11 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
     :param k:
     :param distMeas:
     :param createCent:
-    :return:
+    :return: clusterAssment 分类结果
     """
     dataMat = np.mat(dataSet)
     m = dataMat.shape[0]
-    # 存放分类结果和距离，序列可以存样本的的坐标
+    # 存放分类结果和距离，序列可以存样本的的坐标.note:第一个是分类结果
     clusterAssment = np.mat(np.zeros((m, 2)))
     centriods = createCent(dataMat, k)
     logger.warning("更新前的质心为{}".format(centriods))
@@ -98,3 +98,4 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
 if __name__ == '__main__':
     dataSet = loadData('testSet.txt')
     centriods, cluster = kMeans(dataSet, 5, distEclud, randCent)
+    print(cluster)

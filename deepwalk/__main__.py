@@ -66,7 +66,7 @@ def process(args):
 
     print("Data size (walks*length): {}".format(data_size))
 
-    if False:
+    if True:
         print("Walking...")
         walks = graph.build_deepwalk_corpus(G, num_paths=args.number_walks,
                                             path_length=args.walk_length, alpha=0, rand=random.Random(args.seed))
@@ -152,7 +152,7 @@ def main():
     parser.add_argument('--workers', default=1, type=int,
                         help='Number of parallel processes.')
 
-    args = parser.parse_args(['--output', 'ss', '--input', 'example/p2p-Gnutella08.edgelist'])
+    args = parser.parse_args(['--output', 'karate', '--input', 'example/karate.adjlist'])
     numeric_level = getattr(logging, args.log.upper(), None)
     logging.basicConfig(format=LOGFORMAT)
     logger.setLevel(numeric_level)
