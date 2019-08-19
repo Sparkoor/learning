@@ -4,7 +4,8 @@ https://sy.lianjia.com/zufang/pg3/#contentList
 """
 # 引入线程池
 from multiprocessing.dummy import Pool as pl
-from lxml import etree
+# from lxml import etree
+import xml.etree.ElementTree as etree
 import requests
 # 存数据的
 import csv
