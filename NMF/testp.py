@@ -19,3 +19,16 @@ if __name__ == '__main__':
     for i, k in enumerate(B):
         print(i)
         print(k)
+    print(np.sqrt(A))
+    C = np.array([[1, 2],
+                  [2, 3]])
+    D = np.array([2, 3])
+    S = np.array([[2],
+                  [3]])
+    print(A[:, 1].reshape((2, 1)))
+    M = A[:, 1].reshape((2, 1))
+    print(M)
+    f = np.multiply(A[:, 1], C)
+    print(f)
+    print(A[:, 1])
+    print(np.log(np.e))
