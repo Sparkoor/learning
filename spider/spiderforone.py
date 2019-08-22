@@ -1,11 +1,11 @@
 # 引入线程池
 from multiprocessing.dummy import Pool as pl
 import requests
-from lxml import etree
 # 存数据的
 import csv
 # time可以睡眠
 import time
+
 
 
 def spider(a):
@@ -34,8 +34,10 @@ def download(url):
     return requests.get(url=url, headers=header)
 
 
-def analyMainHtml(html):
-    selector = etree.HTML(html)
+def analyHtml(html):
+
+    # selector = etree.HTML(html)
+    print(html)
     # //*[@id="content"]/div[1]/div[1]/div[1]/div/p[1]/a
     # //*[@id="detail-list-select-1"]
     # 获取图片地址信息
