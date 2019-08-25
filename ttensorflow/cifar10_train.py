@@ -51,7 +51,7 @@ def train():
                     format_str = ('%s: step %d,loss=%.2f (%.1f example/sec);%.3f sec/batch')
                     print(format_str)
 
-        with tf.trian.MonitoredTrainingSession(checkpoint_dir=FLAGS.train_dir,
+        with tf.train.MonitoredTrainingSession(checkpoint_dir=FLAGS.train_dir,
                                                hooks=[tf.train.StopAtStepHook(last_step=FLAGS.max_steps),
                                                       tf.train.NanTensorHook(loss), _LoggerHook()],
                                                config=tf.ConfigProto(

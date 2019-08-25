@@ -47,7 +47,7 @@ def _activation_summary(x):
     tensor_name = re.sub('%s_[0-9]*/' % TOWER_NAME, '', x.op.name)
     # todo:感觉是在设置路径
     tf.summary.histogram(tensor_name + '/activations', x)
-    tf.summary.scalar(tensor_name, '/sparsity', tf.nn.zero_fraction(x))
+    tf.summary.scalar(tensor_name + '/sparsity', tf.nn.zero_fraction(x))
 
 
 def _variable_on_cpu(name, shape, initalizer):
@@ -185,10 +185,10 @@ def _add_loss_summaries(total_loss):
     loss_averages = tf.train.ExponentialMovingAverage(0.9, name='avg')
     losses = tf.get_collection('losses')
     # todo:apply的用法
-    loss_averages_op = loss_averages.apply(loss + [total_loss])
+    loss_averages_op = loss_averages.apply(losses + [total_loss])
     for l in losses + [total_loss]:
-        tf.summary.scalar(l.op.name + '(raw)', 1)
-        tf.summary.scalar(l.op.name, loss_averages.average(1))
+        tf.summary.scalar(l.op.name + '(raw)', l)
+        tf.summary.scalar(l.op.name, loss_averages.average(l))
     return loss_averages_op
 
 

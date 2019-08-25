@@ -27,3 +27,5 @@ print(img_tensor.shape)
 
 plt.imshow(img_tensor[0])
 plt.show()
+
+lay_out
