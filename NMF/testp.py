@@ -20,7 +20,7 @@ if __name__ == '__main__':
         print(i)
         print(k)
     print(np.sqrt(A))
-    C = np.array([[1, 2],
+    C = np.array([[6, 9],
                   [2, 3]])
     D = np.array([2, 3])
     S = np.array([[2],
@@ -32,3 +32,4 @@ if __name__ == '__main__':
     print(f)
     print(A[:, 1])
     print(np.log(np.e))
+    print(np.sum(C,axis=0))

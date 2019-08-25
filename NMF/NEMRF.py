@@ -8,16 +8,18 @@ from commonUtils.Loggings import Logger
 logger = Logger.getLogger()
 
 
-def init_niu():
-    pass
+def init_niu(v, k):
+    return np.random.rand((v, k))
 
 
-def init_sigma():
-    pass
+def init_sigma(k):
+    return np.random.rand((1, k))
 
 
-def init_alpha():
-    pass
+def init_alpha(k):
+    a = np.random.rand(k)
+    sum = np.sum(a)
+    return a / sum
 
 
 def gmm_component(u, sigma, y):
@@ -89,7 +91,8 @@ def get_param_by_em(y, u, sigma, alpha, k, max_error):
                 yu = y[i] - u[j]
                 sigma_2 = np.sum(np.multiply(r[:, k], np.multiply(yu, yu))) / sumr
                 sigma[j] = np.sqrt(sigma_2)
-                alpha[j] = sumr / vlen
+        N = np.sum(np.sum(r))
+        alpha = np.sum(r, axis=1) / N
         # 怎么证明其收敛
         tempVar = Q_func(r, u, y, sigma, alpha, k)
         if var - tempVar < max_error:

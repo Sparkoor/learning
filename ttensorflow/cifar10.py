@@ -89,10 +89,136 @@ def distorted_inputs():
     """
     images, labels = cifar10_input.distorted_inputs(batch_size=FLAGS.batch_size)
     if FLAGS.use_fp16:
+        # 做数据类型的转换
         images = tf.cast(images, tf.float16)
         labels = tf.cast(labels, tf.float16)
     return images, labels
 
 
 def inputs(eval_data):
-    pass
+    """
+    加载数据的
+    :param eval_data:
+    :return:
+    """
+    images, labels = cifar10_input.inputs(eval_data=eval_data, batch_size=FLAGS.batch_size)
+    if FLAGS.use_fp16:
+        images = tf.cast(images, tf.float16)
+        labels = tf.cast(labels, tf.float16)
+    return images, labels
+
+
+def inference(images):
+    """
+    构建模型
+    :param images:
+    :return:
+    """
+    with tf.variable_scope('conv1') as scope:
+        kernel = _variable_with_weight_decay('weights', shape=[5, 5, 3, 64], stddev=5e-2, wd=None)
+        conv = tf.nn.conv2d(images, kernel, [1, 1, 1, 1], padding='SAME')
+        biases = _variable_on_cpu('biases', [64], tf.constant_initializer(0.0))
+        pre_activation = tf.nn.bias_add(conv, biases)
+        conv1 = tf.nn.relu(pre_activation, name=scope.name)
+        _activation_summary(conv1)
+    # pool1
+    pool1 = tf.nn.max_pool(conv1, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool1')
+    #
+    norm1 = tf.nn.lrn(pool1, 4, bias=1.0, alpha=0.001 / 9.0, beta=0.75, name='norm1')
+    # conv2
+    with tf.variable_scope('conv2') as scope:
+        kernel = _variable_with_weight_decay('weight', shape=[5, 5, 64, 64], stddev=5e-2, wd=None)
+        biases = _variable_on_cpu('biases', [64], tf.constant_initializer(0.1))
+        pre_activation = tf.nn.bias_add(conv, biases)
+        conv2 = tf.nn.relu(pre_activation, name=scope.name)
+        _activation_summary(conv2)
+
+    norm2 = tf.nn.lrn(conv2, 4, bias=1.0, alpha=0.001 / 9.0, beta=0.75, name='norm2')
+
+    pool2 = tf.nn.max_pool(norm2, ksize=[1, 3, 3, 1], strides=[1, 2, 2, 1], padding='SAME', name='pool2')
+    # local3 todo:不知道啥意思
+    with tf.variable_scope('local3') as scope:
+        reshape = tf.keras.layers.Flatten()(pool2)
+        dim = reshape.get_shape()[1].value
+        weights = _variable_with_weight_decay('weights', shape=[dim, 384], stddev=0.04, wd=0.004)
+        biases = _variable_on_cpu('biases', [384], tf.constant_initializer(0.1))
+        local3 = tf.nn.relu(tf.matmul(reshape, weights) + biases, name=scope.name)
+        _activation_summary(local3)
+    # local4
+    with tf.variable_scope('local4') as scope:
+        weights = _variable_with_weight_decay('weights', shape=[384, 192], stddev=0.04, wd=0.004)
+        biases = _variable_on_cpu('biases', [192], tf.constant_initializer(0.1))
+        local4 = tf.nn.relu(tf.matmul(local3, weights) + biases, name=scope.name)
+        _activation_summary(local4)
+
+    with tf.variable_scope('softmax_liner') as scope:
+        weights = _variable_with_weight_decay('weights', shape=[192, NUM_CLASSES], stddev=1 / 192.0, wd=None)
+        biases = _variable_on_cpu('biases', [NUM_CLASSES], tf.constant_initializer(0.0))
+        softmax_liner = tf.add(tf.matmul(local4, weights), biases, name=scope.name)
+        _activation_summary(softmax_liner)
+
+    return softmax_liner
+
+
+def loss(logits, labels):
+    """
+
+    :param logits:
+    :param labels:
+    :return:
+    """
+    labels = tf.cast(labels, tf.int64)
+    cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits,
+                                                                   name='cross_entropy_per_example')
+    cross_entropy_mean = tf.reduce_mean(cross_entropy, name='cross_entropy')
+    tf.add_to_collection('losses', cross_entropy_mean)
+    return tf.add_n(tf.get_collection('losses'), name='total_loss')
+
+
+def _add_loss_summaries(total_loss):
+    """
+
+    :param total_loss:
+    :return:
+    """
+    # 创建一个新的什么
+    loss_averages = tf.train.ExponentialMovingAverage(0.9, name='avg')
+    losses = tf.get_collection('losses')
+    # todo:apply的用法
+    loss_averages_op = loss_averages.apply(loss + [total_loss])
+    for l in losses + [total_loss]:
+        tf.summary.scalar(l.op.name + '(raw)', 1)
+        tf.summary.scalar(l.op.name, loss_averages.average(1))
+    return loss_averages_op
+
+
+def train(total_loss, global_step):
+    """
+
+    :param total_loss:
+    :param global_step:
+    :return:
+    """
+    num_batches_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / FLAGS.batch_size
+    decay_steps = int(num_batches_per_epoch * NUM_EPOCHS_PER_DECAY)
+    # 求某种期望
+    lr = tf.train.exponential_decay(INITAL_LEARNING_RATE, global_step, decay_steps, LEARNING_RATE_DECAY_FACTOR,
+                                    staircase=True)
+    tf.summary.scalar('learning_rate', lr)
+    loss_averages_op = _add_loss_summaries(total_loss)
+    with tf.control_dependencies([loss_averages_op]):
+        opt = tf.train.GradientDescentOptimizer(lr)
+        grads = opt.compute_gradients(total_loss)
+
+    apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
+
+    for var in tf.trainable_variables():
+        tf.summary.histogram(var.op.name, var)
+    for grad, var in grads:
+        if grad is not None:
+            tf.summary.histogram(var.op.name + '/gradient', grad)
+    variable_average = tf.train.ExponentialMovingAverage(MOVING_AVERAGE_DECAY, global_step)
+    with tf.control_dependencies([apply_gradient_op]):
+        variable_averages_op = variable_average.apply(tf.trainable_variables())
+
+    return variable_averages_op
