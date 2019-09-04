@@ -51,6 +51,36 @@ class Solution(object):
         else:
             return first[:index]
 
+    def longestCommonPrefix2(self, strs):
+        """
+        计算最长公共前串
+        :param strs:
+        :return:
+        """
+        min_str = float('inf')
+        min_index = 0
+        for i, str in enumerate(strs):
+            min_temp = len(str)
+            if min_temp < min_str:
+                min_str = min_temp
+                min_index = i
+        if min_str == 0:
+            return ""
+        mark = strs[min_index]
+        # 确保把所有的字符串都遍历才退出循环的
+        flag = True
+        idex = 0
+        for i, v in enumerate(mark):
+            for str in strs:
+                if str == mark:
+                    continue
+                if v != str[i]:
+                    idex = i - 1
+                    flag = False
+                    break
+        if not False:
+            return mark[:idex]
+
 
 if __name__ == '__main__':
     s = Solution()
@@ -65,6 +95,6 @@ if __name__ == '__main__':
     m = 'asaddddjidjijis'
     f = 'asa'
     strs = [""]
-    m = s.longestCommonPrefix(strs)
+    m = s.longestCommonPrefix2(strs)
     print(m)
     print(len(""))

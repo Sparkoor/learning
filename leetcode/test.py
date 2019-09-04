@@ -10,3 +10,8 @@ aa = set(nums)
 bb = set(nums1)
 cc = aa.intersection(nums1)
 print(cc)
+maxs = float('inf')
+if 2000000000000 > maxs:
+    print(maxs)
+else:
+    print("min")

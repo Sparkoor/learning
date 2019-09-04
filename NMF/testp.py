@@ -32,4 +32,9 @@ if __name__ == '__main__':
     print(f)
     print(A[:, 1])
     print(np.log(np.e))
-    print(np.sum(C,axis=0))
+    print(np.sum(C, axis=0))
+    dim = C.shape
+    dims = (3, 4)
+    print('--------------------------')
+    for coord in np.ndindex(dims):
+        print(coord)
