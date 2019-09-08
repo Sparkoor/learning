@@ -1,4 +1,7 @@
 import re
+"""
+正则表达式
+"""
 
 r = re.compile("abc")
 print(type(r))
