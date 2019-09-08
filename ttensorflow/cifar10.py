@@ -6,7 +6,7 @@ import tensorflow as tf
 
 import cifar10_input
 
-# todo:未知
+# todo:这是tensorflow中特定的传参
 FLAGS = tf.app.flags.FLAGS
 
 # 基本模型参数,todo:??????
