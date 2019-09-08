@@ -11,9 +11,15 @@ logger = Logger.getLogger()
 
 
 class Emotion(object):
+    """
+    函数中所需数据全部保存文件
+    """
+
     def __init__(self, args):
         self.args = args
         self.articles = pd.read_csv(self.args.data_path1, encoding='utf-8').astype(str)
+        self.labels = pd.read_csv(self.args.data_labels_path, encoding='utf-8').astype(str)
+        self.article_num = self.articles.shape[0]
 
     # print(type(articles.values))
     # # 先分词，统计词的总数，统计词频，对词
@@ -101,23 +107,97 @@ class Emotion(object):
         logger.info("content语料库构造完成")
         # print(cut)
 
+    def load_participle_corpus(self):
+        """
+        加载分词后的文章
+        :return:
+        """
+        articles = pd.read_csv(self.args.data_save1, encoding='utf-8')
+        logger.info("加载分词后的文章{}".format(articles.shape))
+        return articles
+
+    def write_matrix(self, filename, matrix):
+        """
+        保存举证到文件
+        :param filename:
+        :return:
+        """
+        with open(filename, 'w', encoding='utf-8') as f:
+            for line in matrix:
+                f.write(str(line) + '\n')
+            logger.info("写入完成")
+
+    def content_vectorization(self):
+        """
+        把文章向量化
+        :return:
+        """
+        words = ''
+        with open(self.args.content_corpus_file, 'r') as f:
+            for line in f:
+                words = line.strip().split(" ")
+        vector_len = len(words)
+        # todo:这里没有用全量的
+        article_matrix = np.zeros((self.article_num, (vector_len + 1)))
+        articles = self.load_participle_corpus()
+        article_num = articles.shape[0]
+        num = 0
+        for index, data in enumerate(articles.values):
+            reg = "[\'\"\[\]]+"
+            word_str = re.sub(reg, '', data[2])
+            # print(word_str)
+            article_words = word_str.strip().split(",")
+            for w in article_words:
+                i = words.index(w.strip())
+                article_matrix[index, i] += 1
+                # todo:如果为空怎么办
+            label = self.labels.loc[self.labels['id'] == data[0], 'label']
+            # l = int(label.values[0])
+            article_matrix[index, -1] = int(label.values[0])
+            num += 1
+            if num % 100 == 0:
+                print(label)
+                # print(data[0])
+                # print(self.labels['label'][self.labels['id'] == data[0]])
+                logger.info("转化成向量的进度为{}".format(num / article_num))
+        self.write_matrix(self.args.content_vector, article_matrix)
+        return article_matrix
+
+    def title_vectorization(self):
+        """
+        标题向量化
+        :return:
+        """
+        pass
+
 
 def main():
     parse = ArgumentParser("emotion", formatter_class=ArgumentDefaultsHelpFormatter, conflict_handler="resolve")
     # note:dest这个可有可无,有了调用时一定要用dest里的名称
+    # 读取训练集的路径
     parse.add_argument("--data-path1", default=r'D:\work\learning\nplearn\datasets\Train_DataSet.csv',
                        type=str, help="data path")
+    # 保存分词结束的路径
     parse.add_argument("--data-save1", default=r'D:\work\learning\nplearn\datasets\Train_DataSets.csv', type=str,
                        help="保存分词完成的文件")
+    # 保存标题语料库
     parse.add_argument("--title-corpus-file", default=r'D:\work\learning\nplearn\datasets\titlecorpus.txt')
+    # 保存内容语料库
     parse.add_argument("--content-corpus-file", default=r'D:\work\learning\nplearn\datasets\contentcorpus.txt')
+    # 训练集的标签路径
+    parse.add_argument("--data-labels-path", default=r"D:\work\learning\nplearn\datasets\Train_DataSet_Label.csv")
+    # 保存内容向量
+    parse.add_argument("--content-vector", default=r"D:\work\learning\nplearn\datasets\contentvector.txt")
+    # 保存标题向量
+    parse.add_argument("--title-vector", default=r"D:\work\learning\nplearn\datasets\titlevector.txt")
     args = parse.parse_args()
     E = Emotion(args)
     # 先分词
     # E.make_words()
     # 统计语料库
-    E.make_corpus()
+    # E.make_corpus()
     # 将每条文章弄成词频向量
+    E.content_vectorization()
 
 
 if __name__ == '__main__':
