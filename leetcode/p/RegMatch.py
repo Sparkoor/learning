@@ -1,5 +1,7 @@
 import re
-
+"""
+正则表达式测试
+"""
 r = re.compile("abc")
 print(type(r))
 l = re.search("abc", "aaabc")
