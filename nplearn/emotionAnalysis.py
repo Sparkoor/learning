@@ -46,7 +46,7 @@ class Emotion(object):
         with open(filename, 'w', encoding='utf-8') as f:
             f.write("{}\n".format(num))
             for word in set:
-                f.write(word + ' ')
+                f.write(word.strip() + ' ')
 
     def make_words(self):
         # articles = pd.read_csv(self.args.data_path1, encoding='utf-8').astype(str)
@@ -195,10 +195,14 @@ def main():
     # 先分词
     # E.make_words()
     # 统计语料库
-    # E.make_corpus()
+    E.make_corpus()
     # 将每条文章弄成词频向量
-    E.content_vectorization()
+    # E.content_vectorization()
 
 
 if __name__ == '__main__':
     main()
+    # with open(r'D:\work\learning\nplearn\datasets\titlecorpus.txt') as f:
+    #     for line in f:
+    #         st = line.strip().split("")
+    #         print(st)

@@ -1,6 +1,7 @@
 class Solution:
     def longestPalindrome(self, str1, str2):
         """
+        这是求最长公共子串
         :param str:
         :return: rstr
         """
@@ -47,13 +48,22 @@ class Solution:
         print('aaa')
         return idx
 
+    def longestPalindrome2(self, s):
+        """
+        最长回文串
+        :param s:
+        :return:
+        """
+        length = len(s)
+        if length == 1 or length == 0:
+            return s
+        # 暴力求解
+
+        for i in range(length):
+            while True:
+                pass
+
+
 
 if __name__ == '__main__':
-    print('aaa')
-    s = Solution()
-    str1 = 'ADACADDDDAVV'
-    str2 = 'ADD'
-    n = s.maxCommonLength('ABCDABD')
-    print(n)
-    m = s.longestPalindrome(str1, str2)
-    print("返回", m)
+    print(len(""))
