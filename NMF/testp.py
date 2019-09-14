@@ -38,8 +38,10 @@ if __name__ == '__main__':
     # print('--------------------------')
     # for coord in np.ndindex(dims):
     #     print(coord)
-    n = []
-    for i in range(1, 5):
-        m = "{},{},{}".format(i, "sssss", 'ssss')
-        n.append(m)
-    print(n)
+    # n = []
+    # for i in range(1, 5):
+    #     m = "{},{},{}".format(i, "sssss", 'ssss')
+    #     n.append(m)
+    # print(n)
+    s = '<article mdate="2017-06-08" key="tr/gte/TR-0174-12-91-165" publtype="informal">'
+    print(len(s))

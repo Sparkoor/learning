@@ -2,12 +2,14 @@
 解析dblp.xml
 """
 import xml.sax
+import os
 from commonUtils.Loggings import Logger
 
 logger = Logger.getLogger()
 
 _articles = []
 _num = 0
+os.path.splitext()
 
 
 class Article(object):
@@ -106,9 +108,14 @@ def main():
     Handler = ReadXML()
     parser.setContentHandler(Handler)
     parser.parse(r'D:\work\learning\NMF\datasets\dblplitter.xml')
+    articles = len(_articles)
+    num = 0
     for m in _articles:
         ls = list_to_edges(m.author, m.date)
         write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
+        num += 1
+        if num % 1000 == 0:
+            logger.warning("保存数据的比例{}".format(num / articles))
 
 
 if __name__ == '__main__':
