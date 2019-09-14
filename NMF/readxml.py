@@ -67,6 +67,36 @@ class ReadXML(xml.sax.ContentHandler):
             self.article.journal = content
 
 
+def list_to_edges(ls, date):
+    """
+    把list中的数据两两相连,还可以在这里添加规则
+    :param ls:
+    :param date: 产生边的时间
+    :return:
+    """
+    lss = []
+    ls_len = len(ls)
+    if ls_len == 1:
+        return ["{},{},{},{}".format(ls[0], None, 1, date)]
+    for i in range(ls_len):
+        author1 = ls[i]
+        for l in range(i + 1, ls_len):
+            s = "{},{},{},{}".format(author1, ls[l], 1, date)
+            lss.append(s)
+    return lss
+
+
+def write_list_to_file(filename, ls):
+    """
+
+    :param filename:
+    :return:
+    """
+    with open(filename, 'a') as f:
+        for st in ls:
+            f.write(st + '\n')
+
+
 def main():
     # 创建一个xmlRead
     parser = xml.sax.make_parser()
@@ -77,7 +107,8 @@ def main():
     parser.setContentHandler(Handler)
     parser.parse(r'D:\work\learning\NMF\datasets\dblplitter.xml')
     for m in _articles:
-        print(m.title)
+        ls = list_to_edges(m.author, m.date)
+        write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
 
 
 if __name__ == '__main__':
