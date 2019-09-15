@@ -2,6 +2,8 @@
 
 """
 import numpy as np
+import time
+import math
 
 if __name__ == '__main__':
     # s = {}
@@ -45,3 +47,7 @@ if __name__ == '__main__':
     # print(n)
     s = '<article mdate="2017-06-08" key="tr/gte/TR-0174-12-91-165" publtype="informal">'
     print(len(s))
+    t = time.time()
+    print(t)
+    ss = 0.22
+    print(math.floor(ss))

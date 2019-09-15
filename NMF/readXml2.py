@@ -10,7 +10,7 @@ logger = Logger.getLogger()
 
 # 会把整个文件加载成树，大文件效率低下
 # doc = etree.parse(r"test.xml")
-
+# note：貌似太大自动不读取
 # 使用目标解析器方法
 class TitleTarget(object):
     def __init__(self):
@@ -68,7 +68,7 @@ def itertest():
     parser = etree.XMLParser(target=TitleTarget())
 
     # This and most other samples read in the Google copyright data
-    infile = r'D:\work\learning\NMF\datasets\dblplitter.xml'
+    infile = r'D:\workspace\pproject\NMF\analysisData\dblplitter.xml'
 
     results = etree.parse(infile, parser)
 

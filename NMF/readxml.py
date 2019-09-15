@@ -4,6 +4,8 @@
 import xml.sax
 import os
 from commonUtils.Loggings import Logger
+import time
+import math
 
 logger = Logger.getLogger()
 
@@ -53,7 +55,6 @@ class ReadXML(xml.sax.ContentHandler):
             if self.num % 100 == 0:
                 logger.info("读取第{}条".format(self.num))
             _articles.append(self.article)
-        # if len(_articles)==100:
 
     def characters(self, content):
         """
@@ -94,12 +95,16 @@ def write_list_to_file(filename, ls):
     :param filename:
     :return:
     """
+    logger.info("执行写入")
     with open(filename, 'a') as f:
         for st in ls:
-            f.write(st + '\n')
+            l = list_to_edges(st.author, st.date)
+            for i in l:
+                f.write(i + '\n')
 
 
 def main():
+    start = time.time()
     # 创建一个xmlRead
     parser = xml.sax.make_parser()
     # turn off namepsaces
@@ -107,13 +112,29 @@ def main():
 
     Handler = ReadXML()
     parser.setContentHandler(Handler)
-    parser.parse(r'D:\work\learning\NMF\datasets\dblplitter.xml')
+    parser.parse(r'D:\workspace\pproject\NMF\analysisData\dblp.xml')
+    end = time.time()
+    print("use time --{}".format(end - start))
     articles = len(_articles)
-    print(articles)
-    for i in _articles:
-        print(i.title)
+
+    pagesize = 20000
+    # 分页公式
+    totalPage = (articles + pagesize - 1) / pagesize
     num = 0
+    totalPage = math.ceil(totalPage)
+    # todo：出现卡死的情况，应该是io打开关闭的次数太多。。。。
+    for page in range(totalPage):
+        start = page * pagesize
+        end = (page + 1) * pagesize
+        if end > articles:
+            end = articles
+        articleBatch = _articles[int(start):int(end)]
+        with open(r'D:\workspace\pproject\NMF\analysisData\data' + str(page), 'w') as f:
+            for i in articleBatch:
+                f.write(str(i.author) + "," + i.date + "\n")
+    #     write_list_to_file(r'D:\workspace\pproject\NMF\analysisData\dblplitters.txt', articleBatch)
     # for m in _articles:
+    #  todo:分边的时候出现了问题
     #     ls = list_to_edges(m.author, m.date)
     #     write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
     #     num += 1
