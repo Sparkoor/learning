@@ -9,7 +9,6 @@ logger = Logger.getLogger()
 
 _articles = []
 _num = 0
-os.path.splitext()
 
 
 class Article(object):
@@ -54,6 +53,7 @@ class ReadXML(xml.sax.ContentHandler):
             if self.num % 100 == 0:
                 logger.info("读取第{}条".format(self.num))
             _articles.append(self.article)
+        # if len(_articles)==100:
 
     def characters(self, content):
         """
@@ -109,13 +109,16 @@ def main():
     parser.setContentHandler(Handler)
     parser.parse(r'D:\work\learning\NMF\datasets\dblplitter.xml')
     articles = len(_articles)
+    print(articles)
+    for i in _articles:
+        print(i.title)
     num = 0
-    for m in _articles:
-        ls = list_to_edges(m.author, m.date)
-        write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
-        num += 1
-        if num % 1000 == 0:
-            logger.warning("保存数据的比例{}".format(num / articles))
+    # for m in _articles:
+    #     ls = list_to_edges(m.author, m.date)
+    #     write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
+    #     num += 1
+    #     if num % 1000 == 0:
+    #         logger.warning("保存数据的比例{}".format(num / articles))
 
 
 if __name__ == '__main__':
