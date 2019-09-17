@@ -11,7 +11,7 @@ class loadFolders(object):
     def __iter__(self):
         for file in os.listdir(self.path):
             file_abspath = os.path.join(self.path, file)
-            if os.path.isdir(file_abspath):
+            if not os.path.isdir(file_abspath):
                 yield file_abspath
 
 
@@ -23,14 +23,15 @@ class loadFiles(object):
         folders = loadFolders(self.par_path)
         for folder in folders:
             # os.sep 文件分割符
-            catg = folder.split(os.sep)[-1]
-            for file in os.listdir(folder):
-                yield catg, file
+            # catg = folder.split(os.sep)[-1]
+            # for file in os.listdir(folder):
+            #     yield catg, file
+            yield folder
 
 
 if __name__ == '__main__':
-    filepath = os.path.abspath(r'../data/')
+    filepath = os.path.abspath(r'D:/workspace/pproject/NMF/analysisData/data')
     files = loadFiles(filepath)
     # 在这用完一遍，循环一遍
     for i, msg in enumerate(files):
-        print(i)
+        print(msg)
