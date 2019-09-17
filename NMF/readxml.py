@@ -6,6 +6,8 @@ import os
 from commonUtils.Loggings import Logger
 import time
 import math
+import pandas as pd
+import datetime as dt
 
 logger = Logger.getLogger()
 
@@ -81,6 +83,9 @@ def list_to_edges(ls, date):
     ls_len = len(ls)
     if ls_len == 1:
         return ["{},{},{},{}".format(ls[0], None, 1, date)]
+    # 太多的处理不过来
+    if ls_len > 20:
+        return None
     for i in range(ls_len):
         author1 = ls[i]
         for l in range(i + 1, ls_len):
@@ -103,6 +108,32 @@ def write_list_to_file(filename, ls):
                 f.write(i + '\n')
 
 
+def write_list_to_file2(filename, ls):
+    """
+
+    :param filename:
+    :return:
+    """
+    logger.info("执行写入")
+    with open(filename, 'a') as f:
+        for st in ls:
+            f.write(st + '\n')
+
+
+# def time_slice(filename, ls, date):
+#     """
+#     按时间切片
+#     :return:
+#     """
+#     with open(filename, 'a') as f:
+#         for st in ls:
+#             date2 = dt.datetime.strptime(st.date, "%Y-%m-%d")
+#             if date2 < date:
+#                 l = list_to_edges(st.author, st.date)
+#                 for i in l:
+#                     f.write(i + '\n')
+
+
 def main():
     start = time.time()
     # 创建一个xmlRead
@@ -122,24 +153,33 @@ def main():
     totalPage = (articles + pagesize - 1) / pagesize
     num = 0
     totalPage = math.ceil(totalPage)
+    # todo:是用户名太多
     # todo：出现卡死的情况，应该是io打开关闭的次数太多。。。。
-    for page in range(totalPage):
-        start = page * pagesize
-        end = (page + 1) * pagesize
-        if end > articles:
-            end = articles
-        articleBatch = _articles[int(start):int(end)]
-        with open(r'D:\workspace\pproject\NMF\analysisData\data' + str(page), 'w') as f:
-            for i in articleBatch:
-                f.write(str(i.author) + "," + i.date + "\n")
+    # for page in range(totalPage):
+    #     start = page * pagesize
+    #     end = (page + 1) * pagesize
+    #     if end > articles:
+    #         end = articles
+    #     articleBatch = _articles[int(start):int(end)]
+    #     with open(r'D:\workspace\pproject\NMF\analysisData\data' + str(page), 'w') as f:
+    #         for i in articleBatch:
+    #             f.write(str(i.author) + "," + i.date + "\n")
     #     write_list_to_file(r'D:\workspace\pproject\NMF\analysisData\dblplitters.txt', articleBatch)
-    # for m in _articles:
-    #  todo:分边的时候出现了问题
-    #     ls = list_to_edges(m.author, m.date)
-    #     write_list_to_file(r'D:\work\learning\NMF\datasets\dblplitters.txt', ls)
-    #     num += 1
-    #     if num % 1000 == 0:
-    #         logger.warning("保存数据的比例{}".format(num / articles))
+    for l in range(0, 4):
+        timestarp = "201{}-12-30".format(l)
+        date = dt.datetime.strptime(timestarp, "%Y-%m-%d")
+        for m in _articles:
+            # todo:分边的时候出现了问题
+            d = dt.datetime.strptime(m.date, "%Y-%m-%d")
+            if d > date:
+                continue
+            ls = list_to_edges(m.author, m.date)
+            if ls is None:
+                continue
+            write_list_to_file2(r'D:\workspace\pproject\NMF\analysisData\dblplitter' + timestarp + '.txt', ls)
+            num += 1
+            if num % 10000 == 0:
+                logger.warning("保存数据的比例{}".format(num / articles))
 
 
 if __name__ == '__main__':
